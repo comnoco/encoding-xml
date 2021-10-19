@@ -200,7 +200,6 @@ var (
 // EncodeToken allows writing a ProcInst with Target set to "xml" only as the first token
 // in the stream.
 func (enc *Encoder) EncodeToken(t Token) error {
-
 	p := &enc.p
 	switch t := t.(type) {
 	case StartElement:
@@ -601,7 +600,7 @@ func (p *printer) marshalAttr(start *StartElement, name Name, val reflect.Value)
 		if err != nil {
 			return err
 		}
-		start.Attr = append(start.Attr, Attr{name, string(text)})
+		start.Attr = append(start.Attr, Attr{Name: name, Value: string(text)})
 		return nil
 	}
 
@@ -612,7 +611,7 @@ func (p *printer) marshalAttr(start *StartElement, name Name, val reflect.Value)
 			if err != nil {
 				return err
 			}
-			start.Attr = append(start.Attr, Attr{name, string(text)})
+			start.Attr = append(start.Attr, Attr{Name: name, Value: string(text)})
 			return nil
 		}
 	}
@@ -649,7 +648,7 @@ func (p *printer) marshalAttr(start *StartElement, name Name, val reflect.Value)
 	if b != nil {
 		s = string(b)
 	}
-	start.Attr = append(start.Attr, Attr{name, s})
+	start.Attr = append(start.Attr, Attr{Name: name, Value: s})
 	return nil
 }
 
@@ -744,7 +743,11 @@ func (p *printer) writeStart(start *StartElement) error {
 		}
 		p.WriteString(name.Local)
 		p.WriteString(`="`)
-		p.EscapeString(attr.Value)
+		if !attr.IsEscaped {
+			p.EscapeString(attr.Value)
+		} else {
+			p.WriteString(attr.Value)
+		}
 		p.WriteByte('"')
 	}
 	p.WriteByte('>')

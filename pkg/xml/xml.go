@@ -46,8 +46,9 @@ type Name struct {
 
 // An Attr represents an attribute in an XML element (Name=Value).
 type Attr struct {
-	Name  Name
-	Value string
+	Name      Name
+	Value     string
+	IsEscaped bool
 }
 
 // A Token is an interface holding one of the token types:

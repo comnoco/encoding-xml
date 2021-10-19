@@ -148,13 +148,31 @@ var rawTokens = []Token{
 	StartElement{
 		Name{"", "body"},
 		[]Attr{
-			{Name{"xmlns", "foo"}, "ns1"},
-			{Name{"", "xmlns"}, "ns2"},
-			{Name{"xmlns", "tag"}, "ns3"},
+			{
+				Name: Name{
+					Space: "xmlns",
+					Local: "foo",
+				},
+				Value: "ns1",
+			},
+			{
+				Name: Name{
+					Space: "",
+					Local: "xmlns",
+				},
+				Value: "ns2",
+			},
+			{
+				Name: Name{
+					Space: "xmlns",
+					Local: "tag",
+				},
+				Value: "ns3",
+			},
 		},
 	},
 	CharData("\n  "),
-	StartElement{Name{"", "hello"}, []Attr{{Name{"", "lang"}, "en"}}},
+	StartElement{Name{"", "hello"}, []Attr{{Name: Name{Space: "", Local: "lang"}, Value: "en"}}},
 	CharData("World <>'\" 白鵬翔"),
 	EndElement{Name{"", "hello"}},
 	CharData("\n  "),
@@ -167,7 +185,21 @@ var rawTokens = []Token{
 	CharData("\n  "),
 	StartElement{
 		Name{"", "outer"},
-		[]Attr{{Name{"foo", "attr"}, "value"}, {Name{"xmlns", "tag"}, "ns4"}},
+		[]Attr{
+			{
+				Name: Name{
+					Space: "foo",
+					Local: "attr",
+				},
+				Value: "value",
+			}, {
+				Name: Name{
+					Space: "xmlns",
+					Local: "tag",
+				},
+				Value: "ns4",
+			},
+		},
 	},
 	CharData("\n    "),
 	StartElement{Name{"", "inner"}, []Attr{}},
@@ -195,13 +227,38 @@ var cookedTokens = []Token{
 	StartElement{
 		Name{"ns2", "body"},
 		[]Attr{
-			{Name{"xmlns", "foo"}, "ns1"},
-			{Name{"", "xmlns"}, "ns2"},
-			{Name{"xmlns", "tag"}, "ns3"},
+			{
+				Name: Name{
+					Space: "xmlns",
+					Local: "foo",
+				},
+				Value: "ns1",
+			},
+			{
+				Name: Name{
+					Space: "",
+					Local: "xmlns",
+				},
+				Value: "ns2",
+			},
+			{
+				Name: Name{
+					Space: "xmlns",
+					Local: "tag",
+				},
+				Value: "ns3",
+			},
 		},
 	},
 	CharData("\n  "),
-	StartElement{Name{"ns2", "hello"}, []Attr{{Name{"", "lang"}, "en"}}},
+	StartElement{Name{"ns2", "hello"}, []Attr{
+		{
+			Name: Name{
+				Space: "",
+				Local: "lang",
+			},
+			Value: "en",
+		}}},
 	CharData("World <>'\" 白鵬翔"),
 	EndElement{Name{"ns2", "hello"}},
 	CharData("\n  "),
@@ -214,7 +271,19 @@ var cookedTokens = []Token{
 	CharData("\n  "),
 	StartElement{
 		Name{"ns2", "outer"},
-		[]Attr{{Name{"ns1", "attr"}, "value"}, {Name{"xmlns", "tag"}, "ns4"}},
+		[]Attr{{
+			Name: Name{
+				Space: "ns1",
+				Local: "attr",
+			},
+			Value: "value",
+		}, {
+			Name: Name{
+				Space: "xmlns",
+				Local: "tag",
+			},
+			Value: "ns4",
+		}},
 	},
 	CharData("\n    "),
 	StartElement{Name{"ns2", "inner"}, []Attr{}},
@@ -685,7 +754,13 @@ func TestCopyTokenCharData(t *testing.T) {
 }
 
 func TestCopyTokenStartElement(t *testing.T) {
-	elt := StartElement{Name{"", "hello"}, []Attr{{Name{"", "lang"}, "en"}}}
+	elt := StartElement{Name{"", "hello"}, []Attr{{
+		Name: Name{
+			Space: "",
+			Local: "lang",
+		},
+		Value: "en",
+	}}}
 	var tok1 Token = elt
 	tok2 := CopyToken(tok1)
 	if tok1.(StartElement).Attr[0].Value != "en" {
@@ -694,7 +769,13 @@ func TestCopyTokenStartElement(t *testing.T) {
 	if !reflect.DeepEqual(tok1, tok2) {
 		t.Error("CopyToken(StartElement) != StartElement")
 	}
-	tok1.(StartElement).Attr[0] = Attr{Name{"", "lang"}, "de"}
+	tok1.(StartElement).Attr[0] = Attr{
+		Name: Name{
+			Space: "",
+			Local: "lang",
+		},
+		Value: "de",
+	}
 	if reflect.DeepEqual(tok1, tok2) {
 		t.Error("CopyToken(CharData) uses same buffer.")
 	}
