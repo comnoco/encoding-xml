@@ -999,6 +999,11 @@ var marshalTests = []struct {
 			` Bool="false" Str="" Bytes=""></AttrTest>`,
 	},
 	{
+		Value: &AttrTest{Bytes: []byte{}},
+		ExpectXML: `<AttrTest Int="0" int="0" Float="0" Uint8="0"` +
+			` Bool="false" Str="" Bytes=""></AttrTest>`,
+	},
+	{
 		Value: &AttrsTest{
 			Attrs: []Attr{
 				{Name: Name{Local: "Answer"}, Value: "42"},
@@ -1009,9 +1014,11 @@ var marshalTests = []struct {
 				{Name: Name{Local: "Bool"}, Value: "true"},
 				{Name: Name{Local: "Str"}, Value: "str"},
 				{Name: Name{Local: "Bytes"}, Value: "byt"},
+				{Name: Name{Local: "EscapedAttr"}, Value: "&amp;", IsEscaped: true},
+				{Name: Name{Local: "UnescapedAttr"}, Value: "&amp;", IsEscaped: false},
 			},
 		},
-		ExpectXML:   `<AttrsTest Answer="42" Int="8" int="9" Float="23.5" Uint8="255" Bool="true" Str="str" Bytes="byt" Int="0" int="0" Float="0" Uint8="0" Bool="false" Str="" Bytes=""></AttrsTest>`,
+		ExpectXML:   `<AttrsTest Answer="42" Int="8" int="9" Float="23.5" Uint8="255" Bool="true" Str="str" Bytes="byt" EscapedAttr="&amp;" UnescapedAttr="&amp;amp;" Int="0" int="0" Float="0" Uint8="0" Bool="false" Str="" Bytes=""></AttrsTest>`,
 		MarshalOnly: true,
 	},
 	{
